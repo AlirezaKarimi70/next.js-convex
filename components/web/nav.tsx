@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 import { buttonVariants } from '../ui/button'
+import { ThemeToggle } from './theme.toggle'
 
 function NavBar() {
     return (
@@ -15,7 +16,8 @@ function NavBar() {
             </div>
             <div className='flex items-center gap-4'>
                 <Link href='/auth/login' className={buttonVariants({ variant: 'secondary' })}>Login</Link>
-                <Link href='/auth/sin-in' className={buttonVariants()}>Sin in</Link>
+                <Link href='/auth/sign-up' className={buttonVariants()}>Sign up</Link>
+                <ThemeToggle />
             </div>
         </nav>
     )
