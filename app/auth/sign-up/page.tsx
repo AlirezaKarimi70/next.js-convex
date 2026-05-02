@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { authClient } from '@/lib/auth-client';
 
 
 function SignUp() {
@@ -19,7 +20,12 @@ function SignUp() {
             password: "",
         },
     });
-    function onSubmit(data: any) {
+    async function onSubmit(data: z.infer<typeof signUpSchema>) {
+        await authClient.signUp.email({
+            email: data.email,
+            name: data.name,
+            password: data.password,
+        });
     }
     return (
         <Card>
