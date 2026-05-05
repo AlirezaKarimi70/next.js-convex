@@ -4,11 +4,16 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { authClient } from '@/lib/auth-client'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import z from 'zod'
 
 function Login() {
+    const router = useRouter()
     const form = useForm({
         resolver: zodResolver(signInschema),
         defaultValues: {
@@ -16,8 +21,20 @@ function Login() {
             password: "",
         }
     })
-    function onSubmit(data: any) {
-        console.log(data)
+    function onSubmit(data: z.infer<typeof signInschema>) {
+        authClient.signIn.email({
+            email: data.email,
+            password: data.password,
+            fetchOptions: {
+                onSuccess: () => {
+                    toast.success('Logged in successfully');
+                    router.push('/')
+                },
+                onError: (error) => {
+                    toast.error(error.error.message)
+                }
+            }
+        })
     }
     return (
         <Card>

@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "convex": "npx convex dev",
+    "convex": "npx convex dev --env-file .env.local",
     "lint": "eslint"
   },
   "dependencies": {
