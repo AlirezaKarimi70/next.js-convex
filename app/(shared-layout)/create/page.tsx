@@ -6,11 +6,19 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Textarea } from '@/components/ui/textarea'
+import { api } from '@/convex/_generated/api'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
+import { useMutation } from 'convex/react'
+import { useRouter } from 'next/navigation'
+import React, { useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import z from 'zod'
 
 function CreatePost() {
+    const mutation = useMutation(api.posts.createPost)
+    const [isPending, startTransition] = useTransition()
+    const router = useRouter()
     const form = useForm({
         resolver: zodResolver(BlogSchema),
         defaultValues: {
@@ -18,6 +26,18 @@ function CreatePost() {
             content: "",
         }
     })
+    function onSubmit(data: z.infer<typeof BlogSchema>) {
+        startTransition(async () => {
+            console.table(data)
+            await mutation({
+                title: data.title,
+                content: data.content,
+                //   authorId: '123', // Replace with actual author ID
+            })
+            toast.success('Post created successfully');
+            router.push('/')
+        })
+    }
     return (
         <div className='py-12'>
             <div className='text-center mb-6'>
@@ -34,7 +54,7 @@ function CreatePost() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form>
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
                         <FieldGroup>
                             <Controller control={form.control} name='title' render={({ field }) => (
                                 <Field>
@@ -54,7 +74,7 @@ function CreatePost() {
                             )}
 
                             />
-                            <Button> {true ? (
+                            <Button> {isPending ? (
                                 <>
                                     <Spinner />
                                 </>

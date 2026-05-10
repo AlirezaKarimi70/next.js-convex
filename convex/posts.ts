@@ -6,7 +6,6 @@ export const createPost = mutation({
     args: {
         title: v.string(),
         content: v.string(),
-        authorId: v.string(),
     },
     handler: async (ctx, args) => {
         const user = await authComponent.safeGetAuthUser(ctx);
@@ -18,6 +17,7 @@ export const createPost = mutation({
             title: args.title,
             authorId: user._id,
         })
+        console.log('Post created with ID:', post);
         return post
     }
 })
