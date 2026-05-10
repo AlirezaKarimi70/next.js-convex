@@ -1,7 +1,7 @@
 'use client'
 import { signUpSchema } from '@/app/schema/auth'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import React from 'react'
+import React, { useTransition } from 'react'
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { Spinner } from '@/components/ui/spinner';
 
 
 function SignUp() {
@@ -23,24 +24,29 @@ function SignUp() {
             password: "",
         },
     });
-    async function onSubmit(data: z.infer<typeof signUpSchema>) {
-        await authClient.signUp.email({
-            email: data.email,
-            name: data.name,
-            password: data.password,
-            fetchOptions: {
-                onSuccess: () => {
-                    toast.success('  Sign Up in successfully');
-                    router.push('/')
-                },
-                onError: (error) => {
-                    toast.error(error.error.message)
+    const [isPending, startTransition] = useTransition()
+    function onSubmit(data: z.infer<typeof signUpSchema>) {
+        startTransition(async () => {
+            await authClient.signUp.email({
+                email: data.email,
+                name: data.name,
+                password: data.password,
+                fetchOptions: {
+                    onSuccess: () => {
+                        toast.success('  Sign Up in successfully');
+                        router.push('/')
+                    },
+                    onError: (error) => {
+                        toast.error(error.error.message)
+                    }
                 }
             }
-        }
 
-        );
+            );
+        })
     }
+
+
     return (
         <Card>
             <CardHeader>
@@ -113,7 +119,11 @@ function SignUp() {
                                 )
                             }}
                         />
-                        <Button>Sign Up</Button>
+                        <Button> {isPending ? (
+                            <>
+                                <Spinner />
+                            </>
+                        ) : 'Sign Up'} </Button>
                     </FieldGroup>
                 </form>
             </CardContent>

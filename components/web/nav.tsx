@@ -19,7 +19,7 @@ function NavBar() {
                 </div>
                 <Link href='/' className={buttonVariants({ variant: 'ghost' })}>Home</Link>
                 <Link href='/' className={buttonVariants({ variant: 'ghost' })}>Blog</Link>
-                <Link href='/' className={buttonVariants({ variant: 'ghost' })}>Create</Link>
+                <Link href='/create' className={buttonVariants({ variant: 'ghost' })}>Create</Link>
             </div>
             <div className='flex items-center gap-4'>
                 {isLoading ? null : isAuthenticated ? (
